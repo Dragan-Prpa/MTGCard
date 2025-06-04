@@ -34,6 +34,8 @@ class MainActivity : ComponentActivity() {
         val ljama: String;
         ljama = "Filip Ljamic";
 
+        var change=true;
+
         val Minthara = MTGCard(
             title = "Minthara, Merciless Soul",
             manaCost = listOf("c", "c", "w", "b"),
