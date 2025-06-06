@@ -9,24 +9,39 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ljamaljubav.ui.theme.LjamaLjubavTheme
+import fetchCard
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -34,31 +49,8 @@ class MainActivity : ComponentActivity() {
         val ljama: String;
         ljama = "Filip Ljamic";
 
-        var change=true;
 
-        val Minthara = MTGCard(
-            title = "Minthara, Merciless Soul",
-            manaCost = listOf("c", "c", "w", "b"),
-            description = "Ward x, where X is the number of experience" +
-                    "counters you have.\nAt the beginning of your end step, if a permanent you controlled left the battlefield" +
-                    "this turn, you get an experience counter.\nCreatures you control get +1/+0 for each" +
-                    "experience counter you have.",
-            type = "Legendary Creature - Elf Cleric",
-            strength = 2,
-            toughness = 2
-        )
 
-        val Ureni = MTGCard(
-            title = "Ureni, the Song Unending",
-            manaCost = listOf("c", "c", "c", "c", "c", "g", "u", "r"),
-            description = "Flying, protection from white and" +
-                    " from black\nWhen Ureni enters, it deals X damage divided as you choose among any number of target creatures and/or planeswalkers your opponents control, where X is the number of lands you" +
-                    "control.",
-            type = "Legendary Creature - Spirit Dragon",
-            strength = 10,
-            toughness = 10
-
-        )
 
 
 
@@ -66,23 +58,34 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             LjamaLjubavTheme {
+                val cardState = remember { mutableStateOf<MTGCard?>(null) }
+                var searchQuery by remember { mutableStateOf("") }
+                val coroutineScope = rememberCoroutineScope()
+
 
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     LazyColumn {
+                        item{
+                            searchBar(
+                                query = searchQuery,
+                                onQueryChange = { searchQuery = it },
+                                onSearchSubmit = {
+                                    coroutineScope.launch {
+                                        cardState.value = withContext(Dispatchers.IO) {
+                                            fetchCard(searchQuery)
+                                        }
+                                    }
+                                }
+                            )
 
-                        item {
-                            displayMTGCard(
-                                card = Ureni,
-                                modifier = Modifier.padding(innerPadding)
-                            );
                         }
                         item {
                             displayMTGCard(
-                                card = Minthara,
+                                card = cardState.value ?: MTGCard(),
                                 modifier = Modifier.padding(innerPadding)
                             );
-
                         }
+
 
                     }
                 }
@@ -134,84 +137,97 @@ class MainActivity : ComponentActivity() {
     @Composable
     fun displayMana(manaList: List<String>, modifier: Modifier = Modifier) {
         Row() {
-            var counter = 0;
-            var check = false;
+
             for (mana in manaList) {
 
-                if (mana == "c") {
-                    counter++;
-                }
-
-                if (mana != "c" && !check) {
-                    check = true
                     when {
-                        counter == 1 -> Image(
+                        mana == "1" -> Image(
                             painter = painterResource(id = R.drawable.c1),
                             contentDescription = "colorless mana",
                             modifier = Modifier.size(18.dp).padding(1.dp, 1.dp)
                         )
 
-                        counter == 2 -> Image(
+                        mana == "2" -> Image(
                             painter = painterResource(id = R.drawable.c2),
                             contentDescription = "colorless mana",
                             modifier = Modifier.size(18.dp).padding(1.dp, 1.dp)
                         )
 
-                        counter == 3 -> Image(
+                        mana == "3" -> Image(
                             painter = painterResource(id = R.drawable.c3),
                             contentDescription = "colorless mana",
                             modifier = Modifier.size(18.dp).padding(1.dp, 1.dp)
                         )
 
-                        counter == 4 -> Image(
+                        mana == "4" -> Image(
                             painter = painterResource(id = R.drawable.c4),
                             contentDescription = "colorless mana",
                             modifier = Modifier.size(18.dp).padding(1.dp, 1.dp)
                         )
 
-                        counter == 5 -> Image(
+                        mana == "5" -> Image(
                             painter = painterResource(id = R.drawable.c5),
                             contentDescription = "colorless mana",
                             modifier = Modifier.size(18.dp).padding(1.dp, 1.dp)
                         )
-                    }
-                }
+                        mana == "B" -> Image(
+                            painter = painterResource(id = R.drawable.b),
+                            contentDescription = "black mana",
+                            modifier = Modifier.size(18.dp).padding(1.dp, 1.dp)
+                        )
 
-                when {
-                    mana == "b" -> Image(
-                        painter = painterResource(id = R.drawable.b),
-                        contentDescription = "black mana",
-                        modifier = Modifier.size(18.dp).padding(1.dp, 1.dp)
-                    )
+                        mana == "W" -> Image(
+                            painter = painterResource(id = R.drawable.w),
+                            contentDescription = "white mana",
+                            modifier = Modifier.size(18.dp).padding(1.dp, 1.dp)
+                        )
 
-                    mana == "w" -> Image(
-                        painter = painterResource(id = R.drawable.w),
-                        contentDescription = "white mana",
-                        modifier = Modifier.size(18.dp).padding(1.dp, 1.dp)
-                    )
+                        mana == "R" -> Image(
+                            painter = painterResource(id = R.drawable.r),
+                            contentDescription = "red mana",
+                            modifier = Modifier.size(18.dp).padding(1.dp, 1.dp)
+                        )
 
-                    mana == "r" -> Image(
-                        painter = painterResource(id = R.drawable.r),
-                        contentDescription = "red mana",
-                        modifier = Modifier.size(18.dp).padding(1.dp, 1.dp)
-                    )
+                        mana == "G" -> Image(
+                            painter = painterResource(id = R.drawable.g),
+                            contentDescription = "green mana",
+                            modifier = Modifier.size(18.dp).padding(1.dp, 1.dp)
+                        )
 
-                    mana == "g" -> Image(
-                        painter = painterResource(id = R.drawable.g),
-                        contentDescription = "green mana",
-                        modifier = Modifier.size(18.dp).padding(1.dp, 1.dp)
-                    )
-
-                    mana == "u" -> Image(
-                        painter = painterResource(id = R.drawable.u),
-                        contentDescription = "blue mana",
-                        modifier = Modifier.size(18.dp).padding(1.dp, 1.dp)
-                    )
+                        mana == "U" -> Image(
+                            painter = painterResource(id = R.drawable.u),
+                            contentDescription = "blue mana",
+                            modifier = Modifier.size(18.dp).padding(1.dp, 1.dp)
+                        )
                 }
             }
 
 
         }
+    }
+    @Composable
+    fun searchBar(
+        query: String,
+        onQueryChange: (String) -> Unit,
+        onSearchSubmit: () -> Unit
+    ) {
+        TextField(
+            value = query,
+            onValueChange = onQueryChange,
+            placeholder = { Text("Search cards...") },
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Search
+            ),
+            keyboardActions = KeyboardActions(
+                onSearch = {
+                    onSearchSubmit()
+                }
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top=32.dp)
+
+        )
     }
 }
 
