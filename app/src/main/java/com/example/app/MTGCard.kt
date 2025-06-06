@@ -1,4 +1,4 @@
-package com.example.ljamaljubav
+package com.example.app
 
 class MTGCard(
     val title:String = "",

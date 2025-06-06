@@ -1,11 +1,11 @@
 
 import android.util.Log
-import com.example.ljamaljubav.MTGCard
+import com.example.app.MTGCard
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.net.URL
 
-fun fetchCard(cardName:String) : List<MTGCard>? {
+fun FetchCard(cardName:String) : List<MTGCard>? {
     return try {
         val url = URL("https://api.scryfall.com/cards/search?q=$cardName")
         val connection = url.openConnection() as HttpURLConnection
