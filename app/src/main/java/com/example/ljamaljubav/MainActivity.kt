@@ -72,7 +72,7 @@ class MainActivity : ComponentActivity() {
                                 onSearchSubmit = {
                                     coroutineScope.launch {
                                         cardState.value = withContext(Dispatchers.IO) {
-                                            fetchCard(searchQuery)
+                                            fetchCard(searchQuery.replace(" ","-").replace(",",""))
                                         }
                                     }
                                 }
@@ -124,10 +124,12 @@ class MainActivity : ComponentActivity() {
                 Spacer(modifier = Modifier.weight(1f));
                 Text(text = card.description, fontSize = 14.sp)
                 Spacer(modifier = Modifier.weight(1f));
-                Row {
-                    Spacer(modifier = Modifier.weight(1f))
-                    Text(text = "${card.strength}/${card.toughness}")
+                if(card.strength>-1 || card.toughness>-1) {
+                    Row {
+                        Spacer(modifier = Modifier.weight(1f))
+                        Text(text = "${card.strength}/${card.toughness}")
 
+                    }
                 }
             }
         }
@@ -201,7 +203,6 @@ class MainActivity : ComponentActivity() {
                         )
                 }
             }
-
 
         }
     }

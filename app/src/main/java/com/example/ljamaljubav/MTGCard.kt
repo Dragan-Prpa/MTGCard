@@ -5,6 +5,6 @@ class MTGCard(
     val manaCost:List<String> = emptyList(),
     var description:String = "",
     var type:String = "",
-    var strength:Int = 0,
-    var toughness:Int = 0
+    var strength:Int = -1,
+    var toughness:Int = -1
 )
