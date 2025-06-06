@@ -35,7 +35,7 @@ fun fetchCard(cardName:String) : List<MTGCard>? {
                 toughness = card.getInt("toughness")
             }
 
-            val imageUrl = card.getJSONObject("image_uris").getString("normal")
+            val imageUrl = card.getJSONObject("image_uris").getString("art_crop")
 
             val MTGCard = MTGCard(
                 title = name,
@@ -43,7 +43,8 @@ fun fetchCard(cardName:String) : List<MTGCard>? {
                 description = description,
                 type = type,
                 strength = strength,
-                toughness = toughness
+                toughness = toughness,
+                imageUrl = imageUrl
             )
             cards.add(MTGCard)
         }

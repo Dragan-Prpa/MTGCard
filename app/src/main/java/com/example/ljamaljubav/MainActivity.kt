@@ -34,6 +34,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.ljamaljubav.ui.theme.LjamaLjubavTheme
 import fetchCard
 import kotlinx.coroutines.Dispatchers
@@ -104,18 +105,25 @@ class MainActivity : ComponentActivity() {
                     Spacer(modifier = Modifier.weight(1f))
                     displayMana(card.manaCost)
                 }
-                Image(
-                    painter = painterResource(id = R.drawable.placeholder),
+
+                AsyncImage(
+                    model = card.imageUrl,
                     contentDescription = "MTG Card",
-                    modifier = Modifier.size(width = 320.dp, height = 229.dp)
+                    modifier = Modifier
+                        .size(width = 320.dp, height = 229.dp)
                         .align(Alignment.CenterHorizontally),
                     contentScale = ContentScale.Crop,
                     alignment = Alignment.Center
                 )
+
                 Text(text = card.type, textAlign = TextAlign.Start)
-                Spacer(modifier = Modifier.weight(1f));
+
+                Spacer(modifier = Modifier.weight(1f))
+
                 Text(text = card.description, fontSize = 14.sp)
-                Spacer(modifier = Modifier.weight(1f));
+
+                Spacer(modifier = Modifier.weight(1f))
+
                 if(card.strength>-1 || card.toughness>-1) {
                     Row {
                         Spacer(modifier = Modifier.weight(1f))
