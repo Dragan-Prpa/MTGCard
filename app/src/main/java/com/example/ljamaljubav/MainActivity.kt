@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
@@ -46,19 +47,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        val ljama: String;
-        ljama = "Filip Ljamic";
-
-
-
-
-
-
-
 
         setContent {
             LjamaLjubavTheme {
-                val cardState = remember { mutableStateOf<MTGCard?>(null) }
+                val cardsState = remember { mutableStateOf<List<MTGCard>?>(null) }
                 var searchQuery by remember { mutableStateOf("") }
                 val coroutineScope = rememberCoroutineScope()
 
@@ -71,7 +63,7 @@ class MainActivity : ComponentActivity() {
                                 onQueryChange = { searchQuery = it },
                                 onSearchSubmit = {
                                     coroutineScope.launch {
-                                        cardState.value = withContext(Dispatchers.IO) {
+                                        cardsState.value = withContext(Dispatchers.IO) {
                                             fetchCard(searchQuery.replace(" ","-").replace(",",""))
                                         }
                                     }
@@ -79,11 +71,11 @@ class MainActivity : ComponentActivity() {
                             )
 
                         }
-                        item {
+                        items(items = cardsState.value ?: emptyList()) { card ->
                             displayMTGCard(
-                                card = cardState.value ?: MTGCard(),
+                                card = card,
                                 modifier = Modifier.padding(innerPadding)
-                            );
+                            )
                         }
 
 
