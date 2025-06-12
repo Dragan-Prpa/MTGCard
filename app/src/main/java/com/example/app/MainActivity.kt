@@ -31,6 +31,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             LjamaLjubavTheme {
+                var format = "photo" //"photo" za fullart sliku  "draw" za custom funkciju koja crta karte
                 val cardsState = remember { mutableStateOf<List<MTGCard>?>(null) }
                 var searchQuery by remember { mutableStateOf("") }
                 val coroutineScope = rememberCoroutineScope()
@@ -53,10 +54,18 @@ class MainActivity : ComponentActivity() {
 
                         }
                         items(items = cardsState.value ?: emptyList()) { card ->
-                            DisplayMTGCard(
-                                card = card,
-                                modifier = Modifier.padding(innerPadding)
-                            )
+                            if(format=="draw") {
+                                DisplayMTGCard(
+                                    card = card,
+                                    modifier = Modifier.padding(innerPadding)
+                                )
+                            }
+                            if(format=="photo"){
+                                DisplayMTGImage(
+                                    card = card,
+                                    modifier = Modifier.padding(innerPadding)
+                                )
+                            }
                         }
 
 

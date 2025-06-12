@@ -7,5 +7,7 @@ class MTGCard(
     var type:String = "",
     var strength:Int = -1,
     var toughness:Int = -1,
-    var imageUrl:String = ""
+    val imageUrl:String = "",
+    val fullImageUrl:String = "",    //front
+    val backImageUrl:String = ""
 )

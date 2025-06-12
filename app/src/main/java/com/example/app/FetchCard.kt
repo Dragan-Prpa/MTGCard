@@ -20,22 +20,39 @@ fun FetchCard(cardName:String) : List<MTGCard>? {
         for (i in 0 until cardsArray.length()) {
             val card = cardsArray.getJSONObject(i)
 
-
-            val name = card.getString("name")
-            val manaCost = card.getString("mana_cost")
-                .replace("{", "")
-                .split("}")
-                .filter { it.isNotBlank() }
-            val description = card.getString("oracle_text")
-            val type = card.getString("type_line")
             var strength = -1
             var toughness = -1
-            if (type.contains("Creature")) {
-                strength = card.getInt("power")
-                toughness = card.getInt("toughness")
+            var name = ""
+            var manaCost = emptyList<String>()
+            var description = ""
+            var type = ""
+            var imageUrl = ""
+            var fullImageUrl = ""
+            var backImageUrl= ""
+//            if(card.getString("layout")=="normal"){
+//                 name = card.getString("name")
+//                 manaCost = card.getString("mana_cost")
+//                    .replace("{", "")
+//                    .split("}")
+//                    .filter { it.isNotBlank() }
+//                 description = card.getString("oracle_text")
+//                 type = card.getString("type_line")
+//                 if(type.contains("Creature")) {
+//                      strength = card.getInt("power")
+//                    toughness = card.getInt("toughness")
+//                 }
+//                 imageUrl = card.getJSONObject("image_uris").getString("art_crop")
+//            }
+
+
+            if(card.has("card_faces") && !card.has("image_uris")){
+                fullImageUrl = card.getJSONArray("card_faces").getJSONObject(0).getJSONObject("image_uris").getString("large")
+                backImageUrl = card.getJSONArray("card_faces").getJSONObject(1).getJSONObject("image_uris").getString("large")
+            }
+            else {
+                fullImageUrl = card.getJSONObject("image_uris").getString("large")
             }
 
-            val imageUrl = card.getJSONObject("image_uris").getString("art_crop")
 
             val MTGCard = MTGCard(
                 title = name,
@@ -44,7 +61,9 @@ fun FetchCard(cardName:String) : List<MTGCard>? {
                 type = type,
                 strength = strength,
                 toughness = toughness,
-                imageUrl = imageUrl
+                imageUrl = imageUrl,
+                fullImageUrl = fullImageUrl,
+                backImageUrl = backImageUrl
             )
             cards.add(MTGCard)
         }
