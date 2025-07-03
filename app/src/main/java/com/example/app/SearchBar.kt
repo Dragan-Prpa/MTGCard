@@ -32,7 +32,7 @@ fun searchBar(
         ),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top=32.dp)
 
     )
 }
+

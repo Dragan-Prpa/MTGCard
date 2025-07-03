@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 
-class MainActivity : ComponentActivity() {
+class SearchActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +39,9 @@ class MainActivity : ComponentActivity() {
 
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     LazyColumn {
+                        item{
+                            BackButton(HomeActivity::class.java)
+                        }
                         item{
                             searchBar(
                                 query = searchQuery,

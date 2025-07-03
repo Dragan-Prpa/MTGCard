@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -14,9 +15,14 @@
         android:theme="@style/Theme.LjamaLjubav"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".LifeCounterActivity"
+            android:exported="false"
+            android:label="@string/title_activity_life_counter"
+            android:theme="@style/Theme.LjamaLjubav" />
+        <activity
+            android:name=".HomeActivity"
             android:exported="true"
-            android:label="@string/app_name"
+            android:label="@string/title_activity_home"
             android:theme="@style/Theme.LjamaLjubav">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,6 +30,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".SearchActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.LjamaLjubav"></activity>
     </application>
 
 </manifest>
