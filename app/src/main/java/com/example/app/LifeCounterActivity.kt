@@ -9,10 +9,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,10 +25,19 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 
 class LifeCounterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        val controller = WindowInsetsControllerCompat(window, window.decorView)
+        controller.hide(WindowInsetsCompat.Type.systemBars())  // hides status + nav bar
+        controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+
         setContent {
             LotusStyleLifeCounter()
         }
@@ -41,9 +48,9 @@ fun LotusStyleLifeCounter() {
     val playerColors = listOf(Color(0xFFFFC107), Color(0xFFFF1744), Color(0xFFE91E63), Color(0xFF3D5AFE))
 
     Column(modifier = Modifier.fillMaxSize().padding(8.dp)
-                     ,verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        ,verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(modifier = Modifier.weight(1f),
-                       horizontalArrangement =  Arrangement.spacedBy(8.dp)) {
+            horizontalArrangement =  Arrangement.spacedBy(8.dp)) {
             PlayerLifePanel("Player 1", playerColors[0], rotation = 270f, modifier = Modifier.weight(1f))
             PlayerLifePanel("Player 2", playerColors[1], rotation = 90f, modifier = Modifier.weight(1f))
         }
@@ -53,7 +60,24 @@ fun LotusStyleLifeCounter() {
             PlayerLifePanel("Player 4", playerColors[3], rotation = 90f, modifier = Modifier.weight(1f))
         }
     }
+
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .background(Color.White)
+                .padding(horizontal = 24.dp, vertical = 12.dp)
+                .clickable { /* Handle menu click */ }
+        ) {
+            Text("MENU", fontWeight = FontWeight.Bold, color = Color.Black, fontSize = 18.sp)
+        }
+    }
 }
+
 
 @Composable
 fun PlayerLifePanel(
@@ -64,52 +88,86 @@ fun PlayerLifePanel(
 ) {
     var life by remember { mutableStateOf(40) }
 
+    // Rotate the entire box (includes logic + UI)
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(backgroundColor)
+            .padding(8.dp)
             .clickable(
                 onClick = {}
             )
             .pointerInput(Unit) {
-                detectTapGestures { offset ->
-                    val width = size.width
-                    if (rotation == 270f) {
-
-                        if (offset.y < size.height / 2) life++ else life--
-                    } else if (rotation == 90f) {
-
-                        if (offset.y < size.height / 2) life-- else life++
+                detectTapGestures(
+                    onLongPress = { offset ->
+                        if (rotation == 270f) {
+                            if (offset.y < size.height / 2) life += 10 else life -= 10
+                        } else if (rotation == 90f) {
+                            if (offset.y < size.height / 2) life -= 10 else life += 10
+                        }
+                    },
+                    onTap = { offset ->
+                        if (rotation == 270f) {
+                            if (offset.y < size.height / 2) life++ else life--
+                        } else if (rotation == 90f) {
+                            if (offset.y < size.height / 2) life-- else life++
+                        }
                     }
-                }
+                )
             }
             .rotate(rotation)
-            .padding(5.dp)
+
+
     ) {
-        Row(modifier = Modifier.align(Alignment.Center)) {
-            Text(
-                text = "-",
-                fontSize = 48.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
 
-            )
-            Spacer(modifier = Modifier.width(50.dp))
-            Text(
-                text = "$life",
-                fontSize = 48.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxSize()
+        ) {
 
-            )
-            Spacer(modifier = Modifier.width(50.dp))
-            Text(
-                text = "+",
-                fontSize = 48.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
+            Box(
+                modifier = Modifier
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "-",
+                    fontSize = 48.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black.copy(alpha = 0.2f)
+                )
+            }
 
-            )
+
+
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "$life",
+                    fontSize = 48.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
+                )
+            }
+
+
+            Box(
+                modifier = Modifier
+                    .weight(1f),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "+",
+                    fontSize = 48.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black.copy(alpha = 0.2f)
+                )
+            }
         }
     }
 }
